@@ -1,0 +1,36 @@
+type Query {
+  findLikes(object: ID!): [Like]
+  findLike(_id: ID!): Like
+}
+
+type Mutation {
+  createLike(input: CreateLikeInput): Like
+}
+
+type Subscription {
+  likeCreated: Like
+}
+
+type Like implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  object: ID
+  objectModel: LikeObjectUnionModel
+  objectUnion: LikeObjectUnion
+  user: User
+}
+
+input CreateLikeInput {
+  object: ID!
+  objectModel: LikeObjectUnionModel!
+}
+
+union LikeObjectUnion = News | Dynamic | Comment | RetroMessage
+
+enum LikeObjectUnionModel {
+  News
+  Dynamic
+  Comment
+  RetroMessage
+}

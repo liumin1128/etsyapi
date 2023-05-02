@@ -1,0 +1,24 @@
+type Query {
+  findFollows: [Follow]
+  findFollow(_id: ID!): Follow
+}
+
+type Mutation {
+  createFollow(input: CreateFollowInput): Follow
+}
+
+type Subscription {
+  followCreated: Follow
+}
+
+type Follow implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  from: User
+  to: User
+}
+
+input CreateFollowInput {
+  to: ID!
+}

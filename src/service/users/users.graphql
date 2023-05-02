@@ -1,0 +1,67 @@
+type Query {
+  findUser(_id: String!): User
+  findUsers: [User]
+  findUserInfo: User
+  login(input: LoginUserInput): UserWithToken
+}
+
+type UserWithToken {
+  token: String!
+  user: User!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput): User
+  register(input: RegisterUserInput): User
+  updateUserInfo(input: UpdateUserInfoInput): User
+}
+
+type User {
+  _id: ID!
+  createdAt: String
+  updatedAt: String
+  username: String
+  nickname: String
+  phoneNumber: String
+  avatarUrl: String
+  sex: Int
+  sign: String
+  birthday: String
+  position: String
+  company: String
+}
+
+input CreateUserInput {
+  phoneNumber: Int
+  password: String
+}
+
+input RegisterUserInput {
+  password: String!
+  username: String!
+  nickname: String
+  phoneNumber: String
+  avatarUrl: String
+  sex: Int
+  sign: String
+  birthday: String
+  position: String
+  company: String
+}
+
+input LoginUserInput {
+  phoneNumber: String
+  username: String
+  password: String
+}
+
+input UpdateUserInfoInput {
+  avatarUrl: String
+  nickname: String
+  phoneNumber: String
+  sign: String
+  sex: Int
+  birthday: String
+  position: String
+  company: String
+}

@@ -1,0 +1,18 @@
+type Query {
+  oauths: [OAuth]
+  oauth(_id: ID!): OAuth
+}
+
+type Mutation {
+  createOAuth(createOAuthInput: CreateOAuthInput): OAuth
+}
+
+type OAuth @auth(requires: ADMIN) {
+  _id: ID!
+  platform: String @upper
+}
+
+input CreateOAuthInput {
+  name: String
+  age: Int
+}

@@ -1,0 +1,31 @@
+type Query {
+  findHashtags: [Hashtag]
+  findHashtag(_id: ID!): Hashtag
+}
+
+type Mutation {
+  createHashtag(input: CreateHashtagInput): Hashtag
+}
+
+type Subscription {
+  hashtagCreated: Hashtag
+}
+
+type Hashtag implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  user: User
+  category: String
+  name: String
+  cover: String
+  icon: String
+}
+
+input CreateHashtagInput {
+  category: String
+  name: String!
+  cover: String
+  icon: String
+}
+

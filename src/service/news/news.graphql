@@ -1,0 +1,24 @@
+type Query {
+  newsList: [News]
+  news(_id: ID!): News
+}
+
+type Mutation {
+  createNews(createNewsInput: CreateNewsInput): News
+}
+
+type Subscription {
+  newsCreated: News
+}
+
+type News {
+  _id: ID!
+  title: String
+  cover: String
+  html: String
+}
+
+input CreateNewsInput {
+  name: String
+  age: Int
+}

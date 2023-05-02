@@ -1,0 +1,33 @@
+type Query {
+  findProducts(skip: Int, limit: Int, search: String): [Product]
+  findProductsCount(search: String): Int
+  findProduct(_id: ID!): Product
+}
+
+type Mutation {
+  createProduct(input: CreateProductInput): Product
+}
+
+type Product implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+
+  title: String
+  url: String
+  cover: String
+  stars: Float
+  commentCount: Int
+  id: String
+  name: String
+}
+
+input CreateProductInput {
+  title: String
+  url: String
+  cover: String
+  stars: Float
+  commentCount: Int
+  id: String
+  name: String
+}

@@ -1,0 +1,31 @@
+type Query {
+  findTopics: [Topic]
+  findTopic(_id: ID!): Topic
+}
+
+type Mutation {
+  createTopic(input: CreateTopicInput): Topic
+}
+
+type Subscription {
+  topicCreated: Topic
+}
+
+type Topic implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  user: User
+  category: String
+  name: String
+  cover: String
+  icon: String
+}
+
+input CreateTopicInput {
+  category: String
+  name: String!
+  cover: String
+  icon: String
+}
+

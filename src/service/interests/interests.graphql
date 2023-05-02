@@ -1,0 +1,31 @@
+type Query {
+  findInterests: [Interest]
+  findInterest(_id: ID!): Interest
+}
+
+type Mutation {
+  createInterest(input: CreateInterestInput): Interest
+}
+
+type Subscription {
+  interestCreated: Interest
+}
+
+type Interest implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  user: User
+  category: String
+  name: String
+  cover: String
+  icon: String
+}
+
+input CreateInterestInput {
+  category: String
+  name: String!
+  cover: String
+  icon: String
+}
+

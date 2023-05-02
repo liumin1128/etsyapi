@@ -1,0 +1,25 @@
+type Query {
+  findOrganizations: [Organization]
+  findOrganization(_id: ID!): Organization
+}
+
+type Subscription {
+  organizationCreated: Organization
+}
+
+type Organization implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+
+  owner: User!
+  name: String
+  description: String
+  logo: String
+}
+
+input CreateOrganizationInput {
+  name: String!
+  description: String
+  logo: String
+}

@@ -1,0 +1,62 @@
+type Query {
+  findComments(object: ID!): [Comment]
+  findComment(_id: ID!): Comment
+}
+
+type Mutation {
+  createComment(input: CreateCommentInput): Comment
+  replyComment(input: ReplyCommentInput): Reply
+}
+
+type Subscription {
+  commentCreated: Comment
+}
+
+type Comment implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  content: String
+  object: ID
+  objectModel: CommentObjectUnionModel
+  objectUnion: CommentObjectUnion
+  user: User
+  likeCount: Int
+  likeStatus: Boolean
+  comments:[Reply]
+}
+
+type Reply {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+  content: String
+  object: ID
+  objectModel: CommentObjectUnionModel
+  objectUnion: CommentObjectUnion
+  user: User
+  likeCount: Int
+  likeStatus: Boolean
+  replyTo: Comment
+  commentTo: Comment
+}
+
+input CreateCommentInput {
+  content: String
+  object: ID!
+  objectModel: CommentObjectUnionModel!
+}
+
+input ReplyCommentInput {
+  content: String
+  to: ID!
+}
+
+union CommentObjectUnion = News | Comment | RetroMessage
+
+enum CommentObjectUnionModel {
+  News
+  Dynamic
+  Comment
+  RetroMessage
+}

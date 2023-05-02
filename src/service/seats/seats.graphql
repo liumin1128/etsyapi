@@ -1,0 +1,32 @@
+type Query {
+  findSeats: [Seat]
+  findSeat(_id: ID!): Seat
+}
+
+type Mutation {
+  createSeat(input: CreateSeatInput): Seat
+}
+
+type Subscription {
+  seatCreated: Seat
+}
+
+type Seat implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+
+  id: ID!
+  name: String
+  description: String
+  cover: String
+  icon: String
+}
+
+input CreateSeatInput {
+  id: ID!
+  name: String
+  description: String
+  cover: String
+  icon: String
+}

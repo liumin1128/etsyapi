@@ -1,0 +1,60 @@
+type Query {
+  findRetroMessages(retro: ID): [RetroMessage]
+  findRetroMessage(_id: ID!): RetroMessage
+}
+
+type Mutation {
+  createRetroMessage(input: CreateRetroMessageInput): RetroMessage
+  updateRetroMessage(_id: ID, input: UpdateRetroMessageInput): RetroMessage
+  likeRetroMessage(_id: ID, count: Int): RetroMessage
+  deleteRetroMessage(_id: ID): RetroMessage
+}
+
+type Subscription {
+  retroMessageCreated: RetroMessage
+  retroMessageUpdated: RetroMessage
+  retroMessageDeleted: RetroMessage
+  retroMessageLiked: RetroMessage
+}
+
+type RetroMessage implements Document {
+  _id: ID!
+  createdAt: String
+  updatedAt: String
+  content: String
+  anonymous: Boolean
+  status: RetroMessageStatus
+  type: RetroMessageType
+  user: User
+  like: Int
+  pictures: [String!]
+}
+
+enum RetroMessageStatus {
+  NORMAL
+  CLOSED
+  FOCUSED
+}
+
+enum RetroMessageType {
+  HAPPY
+  WONDERRING
+  UNHAPPY
+  TODO
+}
+
+input CreateRetroMessageInput {
+  retro: ID!
+  content: String!
+  type: RetroMessageType!
+  pictures: [String!]
+  anonymous: Boolean
+}
+
+input UpdateRetroMessageInput {
+  content: String
+  status: RetroMessageStatus
+  type: RetroMessageType
+  pictures: [String!]
+  anonymous: Boolean
+}

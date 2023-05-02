@@ -1,0 +1,46 @@
+type Query {
+  findRetros(page: Int, pageSize: Int): [RetroListItem]
+  findRetro(_id: ID!): Retro
+}
+
+type Mutation {
+  createRetro(input: CreateRetroInput): Retro
+}
+
+type Subscription {
+  retroCreated: Retro
+}
+
+type Retro implements Document {
+  _id: ID!
+  createdAt: String
+  updatedAt: String
+  content: String
+  title: String
+  date: String
+  user: User
+  anonymous: Boolean
+}
+
+type RetroListItem implements Document {
+  _id: ID!
+  createdAt: String
+  updatedAt: String
+  content: String
+  title: String
+  date: String
+  user: User
+  anonymous: Boolean
+  likeCount: Int
+  happyCount: Int
+  unhappyCount: Int
+  wonderringCount: Int
+  todoCount: Int
+}
+
+input CreateRetroInput {
+  content: String
+  title: String
+  date: String
+  anonymous: Boolean
+}

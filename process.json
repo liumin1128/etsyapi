@@ -1,0 +1,12 @@
+{
+    "apps": [{
+        "name": "react.mobi/api",
+        "script": "dist/main.js",
+        "log_date_format": "YYYY-MM-DD HH:mm Z",
+        "cron_restart": "0 4 * * * *",
+        "instances": 1,
+        "env": {
+            "NODE_ENV": "production"
+        }
+    }]
+}
