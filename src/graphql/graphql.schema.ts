@@ -105,6 +105,12 @@ export class CreateProductInput {
     commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
+    currencyValue?: Nullable<number>;
+    currencySymbol?: Nullable<string>;
+    originalCurrencyValue?: Nullable<number>;
+    originalCurrencySymbol?: Nullable<string>;
+    starSeller?: Nullable<boolean>;
+    tags?: Nullable<Nullable<string>[]>;
 }
 
 export class CreateRetroMessageInput {
@@ -493,6 +499,12 @@ export class Product implements Document {
     commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
+    currencyValue?: Nullable<number>;
+    currencySymbol?: Nullable<string>;
+    originalCurrencyValue?: Nullable<number>;
+    originalCurrencySymbol?: Nullable<string>;
+    starSeller?: Nullable<boolean>;
+    tags?: Nullable<Nullable<string>[]>;
 }
 
 export class RetroMessage implements Document {

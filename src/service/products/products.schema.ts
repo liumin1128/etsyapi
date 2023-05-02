@@ -4,31 +4,51 @@ import * as mongoosePaginate from 'mongoose-paginate-v2';
 import * as mongooseDelete from 'mongoose-delete';
 // import * as mongooseAutopopulate from 'mongoose-autopopulate';
 
+// const PriceSchema = new mongoose.Schema({
+//   currencyValue: { type: Number, required: true },
+//   currencySymbol: { type: String, required: true },
+// });
+
 @Schema({ timestamps: true })
 export class Product {
-  @Prop()
+  @Prop({ type: String })
   title: string;
 
-  @Prop()
+  @Prop({ type: String })
   url: string;
 
-  @Prop()
+  @Prop({ type: String })
   id: string;
 
-  @Prop()
+  @Prop({ type: String })
   name: string;
 
-  @Prop()
+  @Prop({ type: String })
   cover: string;
 
-  @Prop()
+  @Prop({ type: Number })
   stars: number;
 
-  @Prop()
+  @Prop({ type: Number })
   commentCount: number;
 
-  @Prop()
-  html: string;
+  @Prop({ type: Number })
+  currencyValue: number;
+
+  @Prop({ type: String })
+  currencySymbol: string;
+
+  @Prop({ type: Number })
+  originalCurrencyValue: number;
+
+  @Prop({ type: String })
+  originalCurrencySymbol: string;
+
+  @Prop({ type: Boolean })
+  starSeller: boolean;
+
+  @Prop({ type: [String] })
+  tags: string[];
 }
 
 const ProductSchema = SchemaFactory.createForClass(Product);

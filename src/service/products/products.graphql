@@ -20,6 +20,13 @@ type Product implements Document {
   commentCount: Int
   id: String
   name: String
+
+  currencyValue: Float
+  currencySymbol: String
+  originalCurrencyValue: Float
+  originalCurrencySymbol: String
+  starSeller: Boolean
+  tags: [String]
 }
 
 input CreateProductInput {
@@ -30,4 +37,11 @@ input CreateProductInput {
   commentCount: Int
   id: String
   name: String
+
+  currencyValue: Float
+  currencySymbol: String
+  originalCurrencyValue: Float
+  originalCurrencySymbol: String
+  starSeller: Boolean
+  tags: [String]
 }

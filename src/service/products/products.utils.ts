@@ -1,5 +1,5 @@
 export const urlList = [
-  //   'https://www.etsy.com/uk/c/accessories/hats-and-caps/baseball-and-trucker-caps?ref=catnav-10855',
+  'https://www.etsy.com/uk/c/accessories/hats-and-caps/baseball-and-trucker-caps?ref=catnav-10855',
   //   'https://www.etsy.com/uk/c/accessories/hats-and-caps/winter-hats?ref=catnav-10855',
   //   'https://www.etsy.com/uk/c/accessories/hats-and-caps/sun-hats-and-visors?ref=catnav-10855',
   //   'https://www.etsy.com/uk/c/accessories/hair-accessories/headbands?ref=catnav-10855',
@@ -13,7 +13,7 @@ export const urlList = [
   //   'https://www.etsy.com/uk/c/jewelry/rings/wedding-and-engagement/wedding-bands?ref=catnav-10855',
   //   'https://www.etsy.com/uk/c/jewelry/rings/wedding-and-engagement/promise-rings?ref=catnav-10855',
   //   'https://www.etsy.com/uk/c/jewelry/rings/wedding-and-engagement/bridal-sets?ref=catnav-10855',
-  'https://www.etsy.com/uk/c/clothing/womens-clothing/dresses?ref=catnav-10923',
+  //   'https://www.etsy.com/uk/c/clothing/womens-clothing/dresses?ref=catnav-10923',
   //   'https://www.etsy.com/uk/c/clothing/womens-clothing/tops-and-tees?ref=catnav-10923',
   //   'https://www.etsy.com/uk/c/clothing/womens-clothing/skirts?ref=catnav-10923',
   //   'https://www.etsy.com/uk/c/clothing/womens-clothing/jackets-and-coats?ref=catnav-10923',

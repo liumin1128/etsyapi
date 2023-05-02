@@ -79,6 +79,7 @@ export class ProductsService {
   async getList(url: string): Promise<any> {
     console.log('getList: ', url);
     const html = await this.fetch(url);
+
     const $ = cheerio.load(html);
     const list = [];
 
@@ -94,10 +95,31 @@ export class ProductsService {
         .text()
         .replace('(', '')
         .replace(')', '')
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .replaceAll('\n', '')
         .trim();
+
+      const starSeller =
+        $(el).find('p.star-seller-badge-lavender-text-light').text() ===
+        'Star Seller';
+
+      const currencyValue = $(el).find('.lc-price span.currency-value').text();
+      const currencySymbol = $(el)
+        .find('.lc-price span.currency-symbol')
+        .text();
+
+      const originalCurrencyValue = $(el)
+        .find('.search-collage-promotion-price span.currency-value')
+        .text();
+      const originalCurrencySymbol = $(el)
+        .find('.search-collage-promotion-price span.currency-symbol')
+        .text();
+
+      const tags = [];
+
+      $(el)
+        .find('span.wt-badge')
+        .each((i, el) => {
+          tags.push($(el).text().trim());
+        });
 
       // 解析店铺 ID
       const id = url.split('/listing/')[1].split('/')[0];
@@ -109,7 +131,6 @@ export class ProductsService {
         .split('?')[0]
         .split('-')
         .join(' ');
-      // .replaceAll('-', ' ');
 
       const obj = {
         title,
@@ -120,8 +141,16 @@ export class ProductsService {
         cover,
         stars: parseFloat(stars) || 0,
         commentCount: parseInt(commentCount) || 0,
-        // html, 没必要存，因为是一样的，且容量巨大
+        currencyValue: parseFloat(currencyValue) || 0,
+        currencySymbol,
+        starSeller,
+        tags,
       };
+
+      if (originalCurrencySymbol && originalCurrencyValue) {
+        obj['originalCurrencyValue'] = parseFloat(originalCurrencyValue) || 0;
+        obj['originalCurrencySymbol'] = originalCurrencySymbol;
+      }
 
       list.push(obj);
     });
