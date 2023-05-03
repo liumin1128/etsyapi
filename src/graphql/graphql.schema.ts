@@ -113,6 +113,22 @@ export class CreateProductInput {
     tags?: Nullable<Nullable<string>[]>;
 }
 
+export class CreateProductSnapshotInput {
+    title?: Nullable<string>;
+    url?: Nullable<string>;
+    cover?: Nullable<string>;
+    stars?: Nullable<number>;
+    commentCount?: Nullable<number>;
+    id?: Nullable<string>;
+    name?: Nullable<string>;
+    currencyValue?: Nullable<number>;
+    currencySymbol?: Nullable<string>;
+    originalCurrencyValue?: Nullable<number>;
+    originalCurrencySymbol?: Nullable<string>;
+    starSeller?: Nullable<boolean>;
+    tags?: Nullable<Nullable<string>[]>;
+}
+
 export class CreateRetroMessageInput {
     retro: string;
     content: string;
@@ -255,6 +271,12 @@ export abstract class IQuery {
 
     abstract findProduct(_id: string): Nullable<Product> | Promise<Nullable<Product>>;
 
+    abstract findProductSnapshots(skip?: Nullable<number>, limit?: Nullable<number>, search?: Nullable<string>): Nullable<Nullable<ProductSnapshot>[]> | Promise<Nullable<Nullable<ProductSnapshot>[]>>;
+
+    abstract findProductSnapshotsCount(search?: Nullable<string>): Nullable<number> | Promise<Nullable<number>>;
+
+    abstract findProductSnapshot(_id: string): Nullable<ProductSnapshot> | Promise<Nullable<ProductSnapshot>>;
+
     abstract findRetroMessages(retro?: Nullable<string>): Nullable<Nullable<RetroMessage>[]> | Promise<Nullable<Nullable<RetroMessage>[]>>;
 
     abstract findRetroMessage(_id: string): Nullable<RetroMessage> | Promise<Nullable<RetroMessage>>;
@@ -314,6 +336,8 @@ export abstract class IMutation {
     abstract createOAuth(createOAuthInput?: Nullable<CreateOAuthInput>): Nullable<OAuth> | Promise<Nullable<OAuth>>;
 
     abstract createProduct(input?: Nullable<CreateProductInput>): Nullable<Product> | Promise<Nullable<Product>>;
+
+    abstract createProductSnapshot(input?: Nullable<CreateProductSnapshotInput>): Nullable<ProductSnapshot> | Promise<Nullable<ProductSnapshot>>;
 
     abstract createRetroMessage(input?: Nullable<CreateRetroMessageInput>): Nullable<RetroMessage> | Promise<Nullable<RetroMessage>>;
 
@@ -489,6 +513,25 @@ export class Organization implements Document {
 }
 
 export class Product implements Document {
+    _id: string;
+    createdAt?: Nullable<string>;
+    updatedAt?: Nullable<string>;
+    title?: Nullable<string>;
+    url?: Nullable<string>;
+    cover?: Nullable<string>;
+    stars?: Nullable<number>;
+    commentCount?: Nullable<number>;
+    id?: Nullable<string>;
+    name?: Nullable<string>;
+    currencyValue?: Nullable<number>;
+    currencySymbol?: Nullable<string>;
+    originalCurrencyValue?: Nullable<number>;
+    originalCurrencySymbol?: Nullable<string>;
+    starSeller?: Nullable<boolean>;
+    tags?: Nullable<Nullable<string>[]>;
+}
+
+export class ProductSnapshot implements Document {
     _id: string;
     createdAt?: Nullable<string>;
     updatedAt?: Nullable<string>;

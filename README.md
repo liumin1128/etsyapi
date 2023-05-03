@@ -73,3 +73,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 问题：欧元，货币不统一
+
+for seat in seat*; do mv "$seat" "product${seat#seat}"; done
+for XXX in XXX*; do mv "$XXX" "YYY${XXX#XXX}"; done
+for product in product*; do mv "$product" "productsnapshot${product#product}"; done

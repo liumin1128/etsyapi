@@ -14,6 +14,7 @@ import { UserToOrganizationModule } from '@/service/usertoorganizations/usertoor
 import { SeatsModule } from '@/service/seats/seats.module';
 import { UserToSeatsModule } from '@/service/usertoseats/usertoseats.module';
 import { ProductsModule } from '@/service/products/products.module';
+import { ProductSnapshotsModule } from '@/service/productsnapshots/productsnapshots.module';
 
 export default [
   CommonModule,
@@ -32,4 +33,5 @@ export default [
   SeatsModule,
   UserToSeatsModule,
   ProductsModule,
+  ProductSnapshotsModule,
 ];

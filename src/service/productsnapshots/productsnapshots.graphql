@@ -1,0 +1,47 @@
+type Query {
+  findProductSnapshots(skip: Int, limit: Int, search: String): [ProductSnapshot]
+  findProductSnapshotsCount(search: String): Int
+  findProductSnapshot(_id: ID!): ProductSnapshot
+}
+
+type Mutation {
+  createProductSnapshot(input: CreateProductSnapshotInput): ProductSnapshot
+}
+
+type ProductSnapshot implements Document {
+  _id: ID! @upper
+  createdAt: String
+  updatedAt: String
+
+  title: String
+  url: String
+  cover: String
+  stars: Float
+  commentCount: Int
+  id: String
+  name: String
+
+  currencyValue: Float
+  currencySymbol: String
+  originalCurrencyValue: Float
+  originalCurrencySymbol: String
+  starSeller: Boolean
+  tags: [String]
+}
+
+input CreateProductSnapshotInput {
+  title: String
+  url: String
+  cover: String
+  stars: Float
+  commentCount: Int
+  id: String
+  name: String
+
+  currencyValue: Float
+  currencySymbol: String
+  originalCurrencyValue: Float
+  originalCurrencySymbol: String
+  starSeller: Boolean
+  tags: [String]
+}
