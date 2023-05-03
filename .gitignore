@@ -42,3 +42,4 @@ lerna-debug.log*
 /mongodb
 
 deploy.sh
+uploadDb.sh
