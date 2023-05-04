@@ -5,11 +5,11 @@ import { HttpService } from '@nestjs/axios';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
 import { QiniuService } from '@/utils/qiniu/qiniu.service';
-import { CreateProductSnapshotDto } from './productSnapshots.dto';
+import { CreateProductSnapshotDto } from './productsnapshots.dto';
 import {
   ProductSnapshot,
   ProductSnapshotDocument,
-} from './productSnapshots.schema';
+} from './productsnapshots.schema';
 
 export interface Snapshot {
   title: string;

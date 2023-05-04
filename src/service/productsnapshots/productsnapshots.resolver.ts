@@ -2,9 +2,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '@/service/auth/auth.guard';
-import { ProductSnapshotDocument as ProductSnapshot } from './productSnapshots.schema';
-import { ProductSnapshotsService } from './productSnapshots.service';
-import { CreateProductSnapshotDto } from './productSnapshots.dto';
+import { ProductSnapshotDocument as ProductSnapshot } from './productsnapshots.schema';
+import { ProductSnapshotsService } from './productsnapshots.service';
+import { CreateProductSnapshotDto } from './productsnapshots.dto';
 
 @Resolver('ProductSnapshots')
 export class ProductSnapshotsResolver {

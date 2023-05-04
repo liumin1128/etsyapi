@@ -20,13 +20,20 @@ type Product implements Document {
   commentCount: Int
   id: String
   name: String
-
+  reviews: Int
+  favorites: Int
+  sales: Int
   currencyValue: Float
   currencySymbol: String
   originalCurrencyValue: Float
   originalCurrencySymbol: String
   starSeller: Boolean
+  etsyPick: Boolean
+  bestSeller: Boolean
+  freeShipping: Boolean
   tags: [String]
+  pictures: [String]
+  kinds: [String]
 }
 
 input CreateProductInput {
@@ -37,11 +44,18 @@ input CreateProductInput {
   commentCount: Int
   id: String
   name: String
-
+  reviews: Int
+  favorites: Int
+  sales: Int
   currencyValue: Float
   currencySymbol: String
   originalCurrencyValue: Float
   originalCurrencySymbol: String
   starSeller: Boolean
+  etsyPick: Boolean
+  bestSeller: Boolean
+  freeShipping: Boolean
   tags: [String]
+  pictures: [String]
+  kinds: [String]
 }

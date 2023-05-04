@@ -105,12 +105,20 @@ export class CreateProductInput {
     commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
+    reviews?: Nullable<number>;
+    favorites?: Nullable<number>;
+    sales?: Nullable<number>;
     currencyValue?: Nullable<number>;
     currencySymbol?: Nullable<string>;
     originalCurrencyValue?: Nullable<number>;
     originalCurrencySymbol?: Nullable<string>;
     starSeller?: Nullable<boolean>;
+    etsyPick?: Nullable<boolean>;
+    bestSeller?: Nullable<boolean>;
+    freeShipping?: Nullable<boolean>;
     tags?: Nullable<Nullable<string>[]>;
+    pictures?: Nullable<Nullable<string>[]>;
+    kinds?: Nullable<Nullable<string>[]>;
 }
 
 export class CreateProductSnapshotInput {
@@ -523,12 +531,20 @@ export class Product implements Document {
     commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
+    reviews?: Nullable<number>;
+    favorites?: Nullable<number>;
+    sales?: Nullable<number>;
     currencyValue?: Nullable<number>;
     currencySymbol?: Nullable<string>;
     originalCurrencyValue?: Nullable<number>;
     originalCurrencySymbol?: Nullable<string>;
     starSeller?: Nullable<boolean>;
+    etsyPick?: Nullable<boolean>;
+    bestSeller?: Nullable<boolean>;
+    freeShipping?: Nullable<boolean>;
     tags?: Nullable<Nullable<string>[]>;
+    pictures?: Nullable<Nullable<string>[]>;
+    kinds?: Nullable<Nullable<string>[]>;
 }
 
 export class ProductSnapshot implements Document {
