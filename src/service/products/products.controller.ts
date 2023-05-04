@@ -8,6 +8,5 @@ export class ProductsController {
   @Get()
   async findAll(): Promise<any> {
     return this.productsService.fetchData();
-    // return this.productsService.findAll();
   }
 }

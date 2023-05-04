@@ -17,7 +17,7 @@ export class Product {
   @Prop({ type: String })
   url: string;
 
-  @Prop({ type: String })
+  @Prop({ type: String, unique: true })
   id: string;
 
   @Prop({ type: String })
@@ -46,6 +46,24 @@ export class Product {
 
   @Prop({ type: Boolean })
   starSeller: boolean;
+
+  @Prop({ type: String })
+  description: string;
+
+  @Prop({ type: Number })
+  sales: number;
+
+  @Prop({ type: Number })
+  reviews: number;
+
+  @Prop({ type: Number })
+  favorites: number;
+
+  @Prop({ type: [String] })
+  pictures: string[];
+
+  @Prop({ type: [String] })
+  kinds: string[];
 
   @Prop({ type: [String] })
   tags: string[];

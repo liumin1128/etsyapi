@@ -56,14 +56,11 @@ export class PromisePool {
     if (!item) return;
     const task = this.fn(item);
     this.pool.push(task); // 将该任务推入pool并发池中
-    console.log(`${item.subject} 开始，当前并发剩余：${this.pool.length}`);
-
+    console.log(`并发剩余：${this.pool.length}`);
     task.then(() => {
       // 请求结束后将该Promise任务从并发池中移除
       this.pool.splice(this.pool.indexOf(task), 1);
-      console.log(`${item.subject} 结束，当前并发剩余：${this.pool.length}`);
-
-      console.log(this.pool.length, this.list.length);
+      console.log(`并发剩余：${this.pool.length}`);
       if (this.pool.length === 0 && this.list.length === 0) {
         if (typeof this.cb === 'function') {
           this.cb();
@@ -96,3 +93,48 @@ export function batchTask(
     pool.start(list);
   });
 }
+
+// function concurrentLimit(tasks, limit) {
+//   const results = []; // 存放执行结果的数组
+//   let runningCount = 0; // 正在执行的任务数量
+
+//   // 定义一个递归函数，用于逐个执行任务
+//   function runTask(task) {
+//     runningCount++; // 增加正在执行的任务数量
+//     return Promise.resolve(task()).then((result) => {
+//       results.push(result); // 将执行结果存入数组
+//       runningCount--; // 完成执行后将正在执行的任务数量减1
+//       if (tasks.length) {
+//         // 如果还有未执行的任务，则继续执行
+//         return runTask(tasks.shift());
+//       } else {
+//         return results; // 如果所有任务都已经执行完，则返回所有任务的结果
+//       }
+//     });
+//   }
+
+//   // 构造Promise.race数组，用于限制并发执行的任务数量
+//   const promiseRaceArray = [];
+//   for (let i = 0; i < limit && i < tasks.length; i++) {
+//     promiseRaceArray.push(runTask(tasks.shift()));
+//   }
+
+//   // 返回一个Promise，等待所有任务执行完毕后返回任务结果
+//   return Promise.all(promiseRaceArray).then(() => {
+//     if (tasks.length) {
+//       // 如果还有未执行的任务，则继续执行
+//       return runTask(tasks.shift());
+//     } else {
+//       return results; // 如果所有任务都已经执行完，则返回所有任务的结果
+//     }
+//   });
+// }
+
+// // 示例用法
+// const tasks = [];
+// for (let i = 1; i <= 100; i++) {
+//   tasks.push(createTask(i));
+// }
+// concurrentLimit(tasks, 10).then((results) => {
+//   console.log(results); // 打印任务结果数组
+// });

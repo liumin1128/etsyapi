@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as dayjs from 'dayjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { map, lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
@@ -8,7 +9,39 @@ import { batchTask } from '@/utils/promise';
 import { QiniuService } from '@/utils/qiniu/qiniu.service';
 import { CreateProductDto } from './products.dto';
 import { Product, ProductDocument } from './products.schema';
+import {
+  ProductSnapshot,
+  ProductSnapshotDocument,
+} from '@/service/productsnapshots/productsnapshots.schema';
+
 import { urlList } from './products.utils';
+
+export interface Snapshot {
+  title: string;
+  description: string;
+  stars: number;
+  sales: number;
+  currencyValue: number;
+  reviews: number;
+  favorites: number;
+  kinds: string[];
+  tags: string[];
+  pictures: string[];
+}
+
+interface ListItem {
+  url: string;
+  title: string;
+  id: string;
+  name: string;
+  cover: string;
+  stars: number;
+  commentCount: number;
+  currencyValue: number;
+  currencySymbol: string;
+  starSeller: boolean;
+  tags: string[];
+}
 
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
@@ -21,6 +54,10 @@ export class ProductsService {
   constructor(
     @InjectModel(Product.name)
     private readonly productsModel: Model<ProductDocument>,
+
+    @InjectModel(ProductSnapshot.name)
+    private readonly productSnapshotsModel: Model<ProductSnapshotDocument>,
+
     private readonly httpService: HttpService,
     private readonly qiniuService: QiniuService,
   ) {}
@@ -45,8 +82,8 @@ export class ProductsService {
     return this.productsModel.find(query).skip(skip).limit(limit);
   }
 
-  async findOne(user: string, object: string): Promise<ProductDocument> {
-    return this.productsModel.findOne({ user, object });
+  async findOne(query): Promise<ProductDocument> {
+    return this.productsModel.findOne(query);
   }
 
   async findById(_id: string): Promise<ProductDocument> {
@@ -76,7 +113,140 @@ export class ProductsService {
     );
   }
 
-  async getList(url: string): Promise<any> {
+  async getProductSnapshot(url: string): Promise<Snapshot> {
+    console.log('getList: ', url);
+    const html = await this.fetch(url);
+
+    const $ = cheerio.load(html);
+    const list = [];
+
+    const pictures = [];
+    $('ul.carousel-pane-list li').each((i, el) => {
+      let src = $(el).find('img').attr('src');
+      if (!src) {
+        src = $(el).find('img').attr('data-src');
+      }
+      if (!src) {
+        src = $(el).find('video source').attr('src');
+      }
+      if (src) {
+        pictures.push(src);
+      }
+    });
+
+    const sales = $(
+      '#listing-page-cart span.wt-mb-xs-1.wt-display-inline-block span.wt-text-caption',
+    )
+      .text()
+      .trim()
+      .replace(/[^\d]/g, '');
+
+    const price = $(
+      '#listing-page-cart div[data-buy-box-region="price"] p.wt-text-title-03',
+    )
+      .text()
+      .trim()
+      .replace(/[^\d]/g, '');
+
+    const reviews = $('#reviews h2.wt-text-body-03')
+      .text()
+      .trim()
+      .replace(/[^\d]/g, '');
+
+    const favorites = $(
+      'div.wt-display-flex-xs.wt-align-items-baseline.wt-flex-direction-row-xs .wt-text-caption a.wt-text-link',
+    )
+      .text()
+      .trim()
+      .replace(/[^\d]/g, '');
+
+    const description = $(
+      'p[data-product-details-description-text-content].wt-text-body-01',
+    ).toString();
+
+    const kinds = [];
+
+    $('div.wt-text-caption.wt-text-center-xs.wt-text-left-lg a').each(
+      (i, el) => {
+        if (i === 0) {
+          return;
+        }
+        kinds.push($(el).text().trim());
+      },
+    );
+
+    const tags = [...kinds];
+
+    $('ul.wt-display-flex-xs.tag-cards-with-image.wt-flex-wrap li').each(
+      (i, el) => {
+        tags.push($(el).find('li a').text().trim());
+      },
+    );
+
+    $('ul.wt-action-group.wt-list-inline.wt-mb-xs-2 li').each((i, el) => {
+      tags.push($(el).find('li a').text().trim());
+    });
+
+    const title = $('h1.wt-text-body-01').text().trim();
+    const stars = $('input[name="rating"]').attr('value');
+
+    console.log('title: ', title);
+    console.log('stars: ', stars);
+    console.log('pictures: ', pictures);
+    console.log('sales: ', sales);
+    console.log('price: ', price);
+    console.log('reviews: ', reviews);
+    console.log('favorites: ', favorites);
+    console.log('kinds: ', kinds);
+    console.log('tags: ', tags);
+    console.log('description: ', description);
+
+    return {
+      title,
+      pictures,
+      kinds,
+      tags,
+      description,
+      stars: parseFloat(stars) || 0,
+      sales: parseInt(sales, 10) || 0,
+      currencyValue: parseInt(price, 10) || 0,
+      reviews: parseInt(reviews, 10) || 0,
+      favorites: parseInt(favorites, 10) || 0,
+    };
+  }
+
+  async getDetail(item: ListItem): Promise<any> {
+    try {
+      // console.log('getDetail: ', item);
+      const snapshot = await this.getProductSnapshot(item?.url);
+      // console.log('snapshot: ', snapshot);
+      const obj = { ...item, ...snapshot };
+      console.log('obj: ', obj);
+
+      const product = await this.productsModel.findOneAndUpdate(
+        { id: item.id }, // 查询条件
+        { $set: obj }, // 更新的字段
+        { upsert: true, new: true }, // upsert 为 true 表示如果不存在则创建；new 为 true 表示返回更新后的对象，默认为更新前的对象
+      );
+
+      // 创建商品当日快照
+      await this.productSnapshotsModel.findOneAndUpdate(
+        {
+          product: product._id,
+          createdAt: {
+            $gte: dayjs().startOf('day'),
+            $lt: dayjs().endOf('day'),
+          },
+        }, // 查询条件
+        { $set: obj }, // 更新的字段
+        { upsert: true, new: true }, // upsert 为 true 表示如果不存在则创建；new 为 true 表示返回更新后的对象，默认为更新前的对象
+      );
+    } catch (error) {
+      console.error('getDetail error: ', error);
+    }
+  }
+
+  async getList(url: string): Promise<ListItem[]> {
     console.log('getList: ', url);
     const html = await this.fetch(url);
 
@@ -155,27 +325,21 @@ export class ProductsService {
       list.push(obj);
     });
 
-    const fn = async (obj) => {
-      // await sleepRandom();
-      try {
-        const coverCdn = await this.qiniuService.fetchToQiniu(obj.cover, {
-          path: 'product',
-        });
+    await batchTask(
+      async (obj) => {
+        try {
+          await this.getDetail(obj);
+          return obj;
+        } catch (error) {
+          console.log(error);
+          return 'error';
+        }
+      },
+      list,
+      10,
+    );
 
-        obj.cover = coverCdn;
-
-        return obj;
-      } catch (error) {
-        console.log(error);
-
-        return 'error';
-      }
-    };
-
-    // cdn处理所有图片
-    const data = await batchTask(fn, list, 100);
-
-    return data;
+    return list;
   }
 
   async fetchData(): Promise<ProductDocument[]> {
@@ -193,10 +357,9 @@ export class ProductsService {
     const fn = async (page) => {
       await sleepRandom();
       try {
-        // console.log('page: ', page);
-        const data = await this.getList(page);
-        // console.log('data:', data);
-        await this.productsModel.insertMany(data);
+        const productList = await this.getList(page);
+        console.log('productList:', productList);
+        // await this.productsModel.insertMany(productList);
         return 'ok';
       } catch (error) {
         console.log(error);

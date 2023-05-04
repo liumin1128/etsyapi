@@ -2,50 +2,43 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
 import * as mongooseDelete from 'mongoose-delete';
-// import * as mongooseAutopopulate from 'mongoose-autopopulate';
-
-// const PriceSchema = new mongoose.Schema({
-//   currencyValue: { type: Number, required: true },
-//   currencySymbol: { type: String, required: true },
-// });
+import { ProductDocument } from '@/service/products/products.schema';
 
 @Schema({ timestamps: true })
 export class ProductSnapshot {
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  })
+  product: ProductDocument;
+
   @Prop({ type: String })
   title: string;
 
   @Prop({ type: String })
-  url: string;
-
-  @Prop({ type: String })
-  id: string;
-
-  @Prop({ type: String })
-  name: string;
-
-  @Prop({ type: String })
-  cover: string;
+  description: string;
 
   @Prop({ type: Number })
   stars: number;
 
   @Prop({ type: Number })
-  commentCount: number;
+  sales: number;
 
   @Prop({ type: Number })
   currencyValue: number;
 
-  @Prop({ type: String })
-  currencySymbol: string;
+  @Prop({ type: Number })
+  reviews: number;
 
   @Prop({ type: Number })
-  originalCurrencyValue: number;
+  favorites: number;
 
-  @Prop({ type: String })
-  originalCurrencySymbol: string;
+  @Prop({ type: [String] })
+  pictures: string[];
 
-  @Prop({ type: Boolean })
-  starSeller: boolean;
+  @Prop({ type: [String] })
+  kinds: string[];
 
   @Prop({ type: [String] })
   tags: string[];

@@ -13,15 +13,15 @@ import {
 
 export interface Snapshot {
   title: string;
+  description: string;
   stars: number;
-  pictures: string[];
   sales: number;
-  price: number;
+  currencyValue: number;
   reviews: number;
   favorites: number;
   kinds: string[];
   tags: string[];
-  description: string;
+  pictures: string[];
 }
 
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
@@ -193,7 +193,7 @@ export class ProductSnapshotsService {
       description,
       stars: parseFloat(stars) || 0,
       sales: parseInt(sales, 10) || 0,
-      price: parseInt(price, 10) || 0,
+      currencyValue: parseInt(price, 10) || 0,
       reviews: parseInt(reviews, 10) || 0,
       favorites: parseInt(favorites, 10) || 0,
     };
