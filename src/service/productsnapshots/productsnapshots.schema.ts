@@ -42,6 +42,18 @@ export class ProductSnapshot {
 
   @Prop({ type: [String] })
   tags: string[];
+
+  @Prop({ type: Boolean })
+  starSeller: boolean;
+
+  @Prop({ type: Boolean })
+  etsyPick: boolean;
+
+  @Prop({ type: Boolean })
+  bestSeller: boolean;
+
+  @Prop({ type: Boolean })
+  freeShipping: boolean;
 }
 
 const ProductSnapshotSchema = SchemaFactory.createForClass(ProductSnapshot);

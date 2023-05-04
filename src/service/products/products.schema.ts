@@ -44,9 +44,6 @@ export class Product {
   @Prop({ type: String })
   originalCurrencySymbol: string;
 
-  @Prop({ type: Boolean })
-  starSeller: boolean;
-
   @Prop({ type: String })
   description: string;
 
@@ -67,6 +64,18 @@ export class Product {
 
   @Prop({ type: [String] })
   tags: string[];
+
+  @Prop({ type: Boolean })
+  starSeller: boolean;
+
+  @Prop({ type: Boolean })
+  etsyPick: boolean;
+
+  @Prop({ type: Boolean })
+  bestSeller: boolean;
+
+  @Prop({ type: Boolean })
+  freeShipping: boolean;
 }
 
 const ProductSchema = SchemaFactory.createForClass(Product);

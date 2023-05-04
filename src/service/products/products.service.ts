@@ -24,6 +24,10 @@ export interface Snapshot {
   currencyValue: number;
   reviews: number;
   favorites: number;
+  starSeller: boolean;
+  etsyPick: boolean;
+  bestSeller: boolean;
+  freeShipping: boolean;
   kinds: string[];
   tags: string[];
   pictures: string[];
@@ -190,6 +194,27 @@ export class ProductsService {
     const title = $('h1.wt-text-body-01').text().trim();
     const stars = $('input[name="rating"]').attr('value');
 
+    const starSeller =
+      $('button[data-wt-popover-trigger] p.wt-text-caption-title')
+        .text()
+        .trim() === 'Star Seller';
+
+    const etsyPick =
+      $('button.wt-popover__trigger span.wt-badge').text().trim() ===
+      'Etsy’s Pick';
+    const bestSeller =
+      $('button.wt-popover__trigger span.wt-badge').text().trim() ===
+      'Bestseller';
+    const freeShipping =
+      $('#impact-narrative-banner .wt-show-lg').text().trim() ===
+      'Etsy offsets carbon emissions from shipping and packaging on this purchase.';
+
+    console.log(
+      $('button[data-wt-popover-trigger] p.wt-text-caption-title')
+        .text()
+        .trim(),
+    );
+
     console.log('title: ', title);
     console.log('stars: ', stars);
     console.log('pictures: ', pictures);
@@ -200,6 +225,10 @@ export class ProductsService {
     console.log('kinds: ', kinds);
     console.log('tags: ', tags);
     console.log('description: ', description);
+    console.log('starSeller: ', starSeller);
+    console.log('etsyPick: ', etsyPick);
+    console.log('bestSeller: ', bestSeller);
+    console.log('freeShipping: ', freeShipping);
 
     return {
       title,
@@ -207,6 +236,12 @@ export class ProductsService {
       kinds,
       tags,
       description,
+
+      starSeller,
+      etsyPick,
+      bestSeller,
+      freeShipping,
+
       stars: parseFloat(stars) || 0,
       sales: parseInt(sales, 10) || 0,
       currencyValue: parseInt(price, 10) || 0,
