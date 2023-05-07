@@ -17,14 +17,16 @@ type Product implements Document {
   title: String
   url: String
   cover: String
-  stars: Float
   commentCount: Int
   id: String
   name: String
+
   reviews: Int
+  stars: Float
   favorites: Int
   sales: Int
   currencyValue: Float
+
   currencySymbol: String
   originalCurrencyValue: Float
   originalCurrencySymbol: String

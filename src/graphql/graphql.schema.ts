@@ -123,18 +123,6 @@ export class CreateProductInput {
 
 export class CreateProductSnapshotInput {
     title?: Nullable<string>;
-    url?: Nullable<string>;
-    cover?: Nullable<string>;
-    stars?: Nullable<number>;
-    commentCount?: Nullable<number>;
-    id?: Nullable<string>;
-    name?: Nullable<string>;
-    currencyValue?: Nullable<number>;
-    currencySymbol?: Nullable<string>;
-    originalCurrencyValue?: Nullable<number>;
-    originalCurrencySymbol?: Nullable<string>;
-    starSeller?: Nullable<boolean>;
-    tags?: Nullable<Nullable<string>[]>;
 }
 
 export class CreateRetroMessageInput {
@@ -529,11 +517,11 @@ export class Product implements Document {
     title?: Nullable<string>;
     url?: Nullable<string>;
     cover?: Nullable<string>;
-    stars?: Nullable<number>;
     commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
     reviews?: Nullable<number>;
+    stars?: Nullable<number>;
     favorites?: Nullable<number>;
     sales?: Nullable<number>;
     currencyValue?: Nullable<number>;
@@ -557,10 +545,12 @@ export class ProductSnapshot implements Document {
     title?: Nullable<string>;
     url?: Nullable<string>;
     cover?: Nullable<string>;
-    stars?: Nullable<number>;
-    commentCount?: Nullable<number>;
     id?: Nullable<string>;
     name?: Nullable<string>;
+    reviews?: Nullable<number>;
+    stars?: Nullable<number>;
+    favorites?: Nullable<number>;
+    sales?: Nullable<number>;
     currencyValue?: Nullable<number>;
     currencySymbol?: Nullable<string>;
     originalCurrencyValue?: Nullable<number>;
