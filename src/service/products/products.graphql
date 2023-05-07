@@ -2,6 +2,7 @@ type Query {
   findProducts(skip: Int, limit: Int, search: String): [Product]
   findProductsCount(search: String): Int
   findProduct(_id: ID!): Product
+  findProductById(id: String): Product
 }
 
 type Mutation {
@@ -34,6 +35,8 @@ type Product implements Document {
   tags: [String]
   pictures: [String]
   kinds: [String]
+
+  snapshots: [ProductSnapshot]
 }
 
 input CreateProductInput {

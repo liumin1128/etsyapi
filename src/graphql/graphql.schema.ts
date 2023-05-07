@@ -279,6 +279,8 @@ export abstract class IQuery {
 
     abstract findProduct(_id: string): Nullable<Product> | Promise<Nullable<Product>>;
 
+    abstract findProductById(id?: Nullable<string>): Nullable<Product> | Promise<Nullable<Product>>;
+
     abstract findProductSnapshots(skip?: Nullable<number>, limit?: Nullable<number>, search?: Nullable<string>): Nullable<Nullable<ProductSnapshot>[]> | Promise<Nullable<Nullable<ProductSnapshot>[]>>;
 
     abstract findProductSnapshotsCount(search?: Nullable<string>): Nullable<number> | Promise<Nullable<number>>;
@@ -545,6 +547,7 @@ export class Product implements Document {
     tags?: Nullable<Nullable<string>[]>;
     pictures?: Nullable<Nullable<string>[]>;
     kinds?: Nullable<Nullable<string>[]>;
+    snapshots?: Nullable<Nullable<ProductSnapshot>[]>;
 }
 
 export class ProductSnapshot implements Document {

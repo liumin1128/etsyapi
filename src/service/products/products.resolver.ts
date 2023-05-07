@@ -16,13 +16,23 @@ export class ProductsResolver {
     @Args('skip') skip?: number,
     @Args('search') search?: string,
   ): Promise<Product[]> {
-    return this.productsService.search({ limit, skip, search });
+    const data = await this.productsService.search({ limit, skip, search });
+    return data;
   }
 
   @Query('findProduct')
   async findProduct(@Args('_id') _id: string): Promise<Product> {
     const data = await this.productsService.findById(_id);
     return data;
+  }
+
+  @Query('findProductById')
+  async findProductById(@Args('id') id: string): Promise<Product> {
+    const data = await this.productsService.findOne({ id });
+    if (data && data.length === 1) {
+      return data[0];
+    }
+    return null;
   }
 
   @Query('findProductsCount')

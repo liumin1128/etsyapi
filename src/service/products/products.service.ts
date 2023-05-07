@@ -75,27 +75,239 @@ export class ProductsService {
     return this.productsModel.find();
   }
 
+  async count(query): Promise<number> {
+    return this.productsModel.count(query);
+  }
+
   async search(args): Promise<ProductDocument[]> {
     const { limit = 10, skip = 0, search = '' } = args;
 
-    const query: Record<string, unknown> = {};
+    let matchRules = [];
     if (search) {
-      query.title = { $regex: search, $options: 'i' };
+      matchRules = [
+        {
+          $match: {
+            title: {
+              $regex: search,
+              $options: 'i',
+            },
+            /* 其他筛选条件 */
+          },
+        },
+      ];
     }
 
-    return this.productsModel.find(query).skip(skip).limit(limit);
+    return this.productsModel.aggregate([
+      // 首先匹配商品
+      ...matchRules,
+      {
+        $skip: skip,
+      },
+
+      {
+        $limit: limit,
+      },
+
+      //  关联最近的快照表
+      {
+        $lookup: {
+          from: 'productsnapshots',
+          let: { productID: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$product', '$$productID'] },
+                    // { $gte: ['$createdAt', threeDaysAgo] },
+                  ],
+                },
+              },
+            },
+            { $sort: { createdAt: -1 } },
+            {
+              $limit: 1,
+            },
+            {
+              $project: {
+                /* 快照表需要保留的字段 */
+                sales: 1,
+                stars: 1,
+                favorites: 1,
+                reviews: 1,
+                currencyValue: 1,
+                createdAt: 1,
+              },
+            },
+          ],
+          as: 'snapshots',
+        },
+      },
+    ]);
+
+    // return this.productsModel.find(query).skip(skip).limit(limit);
   }
 
-  async findOne(query): Promise<ProductDocument> {
-    return this.productsModel.findOne(query);
+  async findOne(query): Promise<ProductDocument[]> {
+    return this.productsModel.aggregate([
+      // 首先匹配商品
+      {
+        $match: query,
+      },
+
+      //  关联整个快照表
+      // {
+      //   $lookup: {
+      //     from: "snapshot",
+      //     localField: "_id",
+      //     foreignField: "product",
+      //     as: "snapshots"
+      //   }
+      // },
+
+      //  关联最近的快照表
+      {
+        $lookup: {
+          from: 'productsnapshots',
+          let: { productID: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$product', '$$productID'] },
+                    // { $gte: ['$createdAt', threeDaysAgo] },
+                  ],
+                },
+              },
+            },
+            { $sort: { createdAt: -1 } },
+            {
+              $limit: 90,
+            },
+            {
+              $project: {
+                /* 快照表需要保留的字段 */
+                sales: 1,
+                stars: 1,
+                favorites: 1,
+                reviews: 1,
+                currencyValue: 1,
+                createdAt: 1,
+              },
+            },
+          ],
+          as: 'snapshots',
+        },
+      },
+
+      //  下面是修改最终结果的形态
+      // {
+      //   $project: {
+      //     titles: '$snapshots.title', // 将查询结果中的price字段保存到snapshots字段中
+      //     snapshots: '$snapshots.currencyValue', // 将查询结果中的price字段保存到snapshots字段中
+      //   },
+      // },
+
+      // {
+      //   $addFields: {
+      //     snapshots: {
+      //       $map: {
+      //         input: '$snapshots',
+      //         as: 'snapshot',
+      //         in: {
+      //           sales: '$$snapshot.sales',
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+    ]);
+
+    return this.productsModel.aggregate([
+      // 首先匹配商品
+      {
+        $match: {},
+      },
+
+      //  关联整个快照表
+      // {
+      //   $lookup: {
+      //     from: "snapshot",
+      //     localField: "_id",
+      //     foreignField: "product",
+      //     as: "snapshots"
+      //   }
+      // },
+
+      //  关联最近的快照表
+      {
+        $lookup: {
+          from: 'productsnapshots',
+          let: { productID: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$product', '$$productID'] },
+                    // { $gte: ['$createdAt', threeDaysAgo] },
+                  ],
+                },
+              },
+            },
+            {
+              $limit: 100,
+            },
+            {
+              $project: {
+                /* 快照表需要保留的字段 */
+                sales: 1,
+                stars: 1,
+                favorites: 1,
+                reviews: 1,
+                currencyValue: 1,
+                createdAt: 1,
+              },
+            },
+          ],
+          as: 'snapshots',
+        },
+      },
+
+      //  下面是修改最终结果的形态
+      // {
+      //   $project: {
+      //     titles: '$snapshots.title', // 将查询结果中的price字段保存到snapshots字段中
+      //     snapshots: '$snapshots.currencyValue', // 将查询结果中的price字段保存到snapshots字段中
+      //   },
+      // },
+
+      // {
+      //   $addFields: {
+      //     snapshots: {
+      //       $map: {
+      //         input: '$snapshots',
+      //         as: 'snapshot',
+      //         in: {
+      //           sales: '$$snapshot.sales',
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+    ]);
+    // .populate({
+    //   path: 'snapshots',
+    //   select: '_id',
+    //   strictPopulate: false,
+    //   match: { product: '$$_id' },
+    //   model: this.productSnapshotsModel,
+    // });
   }
 
   async findById(_id: string): Promise<ProductDocument> {
     return this.productsModel.findById(_id);
-  }
-
-  async count(query): Promise<number> {
-    return this.productsModel.count(query);
   }
 
   async fetch(url: string): Promise<any> {
