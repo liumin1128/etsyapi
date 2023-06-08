@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { InjectModel } from '@nestjs/mongoose';
-import { map, lastValueFrom } from 'rxjs';
+import { map, lastValueFrom, catchError } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
@@ -13,8 +13,41 @@ import {
   ProductSnapshot,
   ProductSnapshotDocument,
 } from '@/service/productsnapshots/productsnapshots.schema';
-
 import { urlList } from './products.utils';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { HttpsProxyAgent } = require('https-proxy-agent');
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const SocksProxyAgent = require('socks-proxy-agent');
+
+interface Auth {
+  username: string;
+  password: string;
+}
+
+interface ProxyConfig {
+  host: string;
+  port: number;
+  auth: Auth;
+  protocol: string;
+}
+
+interface ProxyItem {
+  id: string;
+  username: string;
+  password: string;
+  proxy_address: string;
+  port: number;
+  valid: boolean;
+  last_verification: string;
+  country_code: string;
+  city_name: string;
+  asn_name: string;
+  asn_number: number;
+  high_country_confidence: boolean;
+  created_at: string;
+}
 
 export interface Snapshot {
   title: string;
@@ -55,6 +88,8 @@ async function sleepRandom() {
 
 @Injectable()
 export class ProductsService {
+  proxyList: ProxyItem[] = [];
+
   constructor(
     @InjectModel(Product.name)
     private readonly productsModel: Model<ProductDocument>,
@@ -65,6 +100,7 @@ export class ProductsService {
     private readonly httpService: HttpService,
     private readonly qiniuService: QiniuService,
   ) {}
+
   async create(createProductDto: CreateProductDto): Promise<ProductDocument> {
     const createdProduct = new this.productsModel(createProductDto);
     await createdProduct.save();
@@ -310,10 +346,79 @@ export class ProductsService {
     return this.productsModel.findById(_id);
   }
 
-  async fetch(url: string): Promise<any> {
+  async getAgentList(): Promise<ProxyItem[]> {
+    console.log('getAgentList');
+    const url =
+      'https://proxy.webshare.io/api/v2/proxy/list/?page=1&page_size=100&mode=direct';
+
+    const proxy = {
+      host: '104.239.37.40',
+      port: 5692,
+      auth: {
+        username: 'bxqycapg',
+        password: 'ph4aadbj8pr',
+      },
+      protocol: 'http', // 增加此项声明使用http代理
+    };
+
     return lastValueFrom<any>(
       this.httpService
         .get(url, {
+          proxy,
+          headers: {
+            // Authorization: 'Token 66tpg1pk04u42dbm0sie6my2f5xmt8kw39imnum9', // 自己
+            Authorization: 'Token o8xkqfirseuiape46z49tov7aqbrxb0qv4hgscev',
+          },
+        })
+        .pipe(
+          map((response) => {
+            return response.data.results;
+          }),
+        ),
+    );
+  }
+
+  async getRandomAgent(): Promise<ProxyConfig> {
+    if (this.proxyList.length === 0) {
+      const list = await this.getAgentList();
+      this.proxyList = list;
+    }
+
+    const proxyItem =
+      this.proxyList[Math.floor(Math.random() * this.proxyList.length)];
+
+    return {
+      host: proxyItem.proxy_address,
+      port: proxyItem.port,
+      auth: {
+        username: proxyItem.username,
+        password: proxyItem.password,
+      },
+      protocol: 'http', // 增加此项声明使用http代理
+    };
+  }
+
+  async removeProxyAgent(proxy) {
+    console.log('removeProxyAgent: ', proxy);
+    console.log('this.proxyList: ', this.proxyList.length);
+    this.proxyList = this.proxyList.filter((item) => {
+      return item.proxy_address !== proxy.host;
+    });
+    console.log('this.proxyList: ', this.proxyList.length);
+  }
+
+  async fetch(url: string, retryCount = 3): Promise<any> {
+    console.log('url: ', url);
+
+    await sleepRandom();
+
+    const proxy = await this.getRandomAgent();
+
+    return lastValueFrom<any>(
+      this.httpService
+        .get(url, {
+          proxy,
+          timeout: 30000,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'text/plain',
@@ -324,6 +429,24 @@ export class ProductsService {
         .pipe(
           map((response) => {
             return response.data;
+          }),
+          catchError((error) => {
+            console.log('error: ', error);
+            this.removeProxyAgent(proxy);
+            console.log('retryCount', retryCount);
+            console.log('retryCount', retryCount);
+            console.log('retryCount', retryCount);
+            console.log('retryCount', retryCount);
+            console.log('retryCount', retryCount);
+            if (retryCount === 0) {
+              console.log('retryCount === 0');
+              console.log('retryCount === 0');
+              console.log('retryCount === 0');
+              console.log('retryCount === 0');
+              console.log('retryCount === 0');
+              throw error;
+            }
+            return this.fetch(url, retryCount - 1);
           }),
         ),
     );
@@ -421,27 +544,7 @@ export class ProductsService {
       $('#impact-narrative-banner .wt-show-lg').text().trim() ===
       'Etsy offsets carbon emissions from shipping and packaging on this purchase.';
 
-    console.log(
-      $('button[data-wt-popover-trigger] p.wt-text-caption-title')
-        .text()
-        .trim(),
-    );
-
-    console.log('title: ', title);
-    console.log('stars: ', stars);
-    console.log('pictures: ', pictures);
-    console.log('sales: ', sales);
-    console.log('price: ', price);
-    console.log('reviews: ', reviews);
-    console.log('favorites: ', favorites);
-    console.log('kinds: ', kinds);
-    console.log('tags: ', tags);
-    console.log('description: ', description);
-    console.log('starSeller: ', starSeller);
-    console.log('etsyPick: ', etsyPick);
-    console.log('bestSeller: ', bestSeller);
-    console.log('freeShipping: ', freeShipping);
-
+    console.log('Snapshot Title: ', title);
     return {
       title,
       pictures,
@@ -464,11 +567,8 @@ export class ProductsService {
 
   async getDetail(item: ListItem): Promise<any> {
     try {
-      // console.log('getDetail: ', item);
       const snapshot = await this.getProductSnapshot(item?.url);
-      // console.log('snapshot: ', snapshot);
       const obj = { ...item, ...snapshot };
-      console.log('obj: ', obj);
 
       const product = await this.productsModel.findOneAndUpdate(
         { id: item.id }, // 查询条件
@@ -489,7 +589,7 @@ export class ProductsService {
         { upsert: true, new: true }, // upsert 为 true 表示如果不存在则创建；new 为 true 表示返回更新后的对象，默认为更新前的对象
       );
     } catch (error) {
-      console.error('getDetail error: ', error);
+      console.error('getDetail error: ', error.response?.data);
     }
   }
 
@@ -599,25 +699,32 @@ export class ProductsService {
       });
     });
 
-    const concurrent = 20;
+    const concurrent = 1;
 
-    const fn = async (page) => {
-      await sleepRandom();
-      try {
-        const productList = await this.getList(page);
-        console.log('productList:', productList);
-        // await this.productsModel.insertMany(productList);
-        return 'ok';
-      } catch (error) {
-        console.log(error);
-        return 'error';
-      }
-    };
+    console.log('urlList:', urlList);
 
-    const data = await batchTask(fn, pageList, concurrent);
+    try {
+      const fn = async (page) => {
+        try {
+          const productList = await this.getList(page);
+          console.log('productList:', productList);
+          // await this.productsModel.insertMany(productList);
+          return 'ok';
+        } catch (error) {
+          console.log(error);
+          return 'error';
+        }
+      };
 
-    console.log('data');
-    console.log(data);
+      const data = await batchTask(fn, pageList, concurrent);
+      console.log('data');
+      console.log(data);
+    } catch (error) {
+      console.log('final error');
+      console.log(error);
+    }
+
+    console.log('final success');
 
     return [];
   }

@@ -9,4 +9,9 @@ export class ProductsController {
   async findAll(): Promise<any> {
     return this.productsService.fetchData();
   }
+
+  @Get('/proxy')
+  async getProxy(): Promise<any> {
+    return this.productsService.getRandomAgent();
+  }
 }

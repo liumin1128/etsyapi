@@ -54,13 +54,13 @@ export class PromisePool {
 
   setTask(item: any) {
     if (!item) return;
+    console.log(`等待队列长度：${this.list.length}`);
+    console.log(`执行队列长度：${this.pool.length}`);
     const task = this.fn(item);
     this.pool.push(task); // 将该任务推入pool并发池中
-    console.log(`并发剩余：${this.pool.length}`);
     task.then(() => {
       // 请求结束后将该Promise任务从并发池中移除
       this.pool.splice(this.pool.indexOf(task), 1);
-      console.log(`并发剩余：${this.pool.length}`);
       if (this.pool.length === 0 && this.list.length === 0) {
         if (typeof this.cb === 'function') {
           this.cb();
