@@ -83,7 +83,7 @@ interface ListItem {
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
 async function sleepRandom() {
-  return await sleep(Math.random() * 10000);
+  return await sleep(2 + Math.random() * 3);
 }
 
 @Injectable()
@@ -381,6 +381,7 @@ export class ProductsService {
   async getRandomAgent(): Promise<ProxyConfig> {
     if (this.proxyList.length === 0) {
       const list = await this.getAgentList();
+      console.log('Agent list: ', list.length);
       this.proxyList = list;
     }
 
@@ -418,7 +419,7 @@ export class ProductsService {
       this.httpService
         .get(url, {
           proxy,
-          timeout: 30000,
+          timeout: 10000,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Content-Type': 'text/plain',
@@ -434,15 +435,7 @@ export class ProductsService {
             console.log('error: ', error);
             this.removeProxyAgent(proxy);
             console.log('retryCount', retryCount);
-            console.log('retryCount', retryCount);
-            console.log('retryCount', retryCount);
-            console.log('retryCount', retryCount);
-            console.log('retryCount', retryCount);
             if (retryCount === 0) {
-              console.log('retryCount === 0');
-              console.log('retryCount === 0');
-              console.log('retryCount === 0');
-              console.log('retryCount === 0');
               console.log('retryCount === 0');
               throw error;
             }
@@ -683,7 +676,7 @@ export class ProductsService {
         }
       },
       list,
-      10,
+      64,
     );
 
     return list;
@@ -693,7 +686,7 @@ export class ProductsService {
     const pageList = [];
 
     urlList.map((i) => {
-      const page = 1; // 250
+      const page = 10; // 250
       new Array(page).fill('x').map((_, idx) => {
         pageList.push(i.split('?')[0] + '?ref=pagination&page=' + (idx + 1));
       });
