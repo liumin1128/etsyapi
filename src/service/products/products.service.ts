@@ -83,7 +83,7 @@ interface ListItem {
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
 async function sleepRandom() {
-  return await sleep(2 + Math.random() * 3);
+  return await sleep(2 + Math.random() * 8);
 }
 
 @Injectable()
